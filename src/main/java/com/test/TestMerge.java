@@ -1,8 +1,8 @@
 package com.test;
 
 import com.test.myinterface.MyLambdaInterface;
+import org.apache.commons.collections4.CollectionUtils;
 
-import org.apache.commons.collections.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
