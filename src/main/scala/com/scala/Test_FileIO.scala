@@ -13,7 +13,6 @@ import scala.io.Source
  */
 object Test_FileIO {
   def main(args: Array[String]): Unit = {
-
     //从文件读取数据
     val source = Source.fromFile("src/main/resources/test.txt")
     source.foreach(println)
