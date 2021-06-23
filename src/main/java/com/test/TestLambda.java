@@ -33,8 +33,8 @@ public class TestLambda {
 
     public static void main(String[] args) {
         // testDeBug();
-        //test5();
-        testStringUtils();
+        test3();
+        // testStringUtils();
 
     }
 
@@ -78,7 +78,13 @@ public class TestLambda {
         System.out.println(cdl.getCount());
         try {
             //打印数据源中的数据
-            pool.execute(() -> PERSON_LIST.forEach(System.out::println));
+            pool.execute(() -> PERSON_LIST.forEach(s -> {
+                System.out.println(s);
+                //减少锁存器的计数，如果计数达到零，则释放所有等待线程。
+                //如果当前计数大于零，则将其递减。 如果新计数为零，则将重新启用所有等待线程以进行线程调度。
+                //如果当前计数等于零，那么什么也不会发生
+                cdl.countDown();
+            }));
             //让当前线程处于阻塞状态，直到锁存器计数为零（或者线程中断）
             cdl.await();
         } catch (InterruptedException e) {
@@ -86,10 +92,6 @@ public class TestLambda {
         } finally {
             //关闭线程池
             pool.shutdown();
-            //减少锁存器的计数，如果计数达到零，则释放所有等待线程。
-            //如果当前计数大于零，则将其递减。 如果新计数为零，则将重新启用所有等待线程以进行线程调度。
-            //如果当前计数等于零，那么什么也不会发生
-            cdl.countDown();
         }
     }
 
@@ -104,16 +106,18 @@ public class TestLambda {
         CountDownLatch cdl = new CountDownLatch(PERSON_LIST.size());
         try {
             //打印数据源中的数据
-            pool.execute(() -> PERSON_LIST.parallelStream().forEach(System.out::println));
+            pool.execute(() -> PERSON_LIST.parallelStream().forEach(s -> {
+                System.out.println(s);
+                //减少锁存器的计数，如果计数达到零，则释放所有等待线程。
+                //如果当前计数大于零，则将其递减。 如果新计数为零，则将重新启用所有等待线程以进行线程调度。
+                //如果当前计数等于零，那么什么也不会发生
+                cdl.countDown();
+            }));
             //让当前线程处于阻塞状态，直到锁存器计数为零（或者线程中断）
             cdl.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            //减少锁存器的计数，如果计数达到零，则释放所有等待线程。
-            //如果当前计数大于零，则将其递减。 如果新计数为零，则将重新启用所有等待线程以进行线程调度。
-            //如果当前计数等于零，那么什么也不会发生
-            cdl.countDown();
             //关闭线程池
             pool.shutdown();
         }
