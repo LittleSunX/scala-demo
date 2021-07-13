@@ -16,7 +16,7 @@ object Test09 {
     if (list.length > 2) {
       return "list数据大于2"
     }
-    "list有数据"
+    "未知情况"
   }
 
   def test2(): (String, Array[AnyRef]) = {
